@@ -1,20 +1,69 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { TamaguiProvider, YStack, Text } from 'tamagui';
+import config from './tamagui.config';
+import { ThemeProvider } from './components/ThemeProvider';
+import { useAppTheme } from './components/ThemeProvider';
+import { AppButton } from './components/AppButton';
+import { StatCard } from './components/StatCard';
 
-export default function App() {
+function HomeScreen() {
+  const { colors, fontSize, spacing } = useAppTheme();
+  
+  // Example stats
+  const stats = [
+    { label: 'Total', value: '0h' },
+    { label: 'Goal', value: '0%' },
+    { label: 'Trained', value: 'Never' }
+  ];
+  
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <YStack 
+      flex={1} 
+      backgroundColor={colors.background} 
+      padding={spacing.large}
+    >
+      <YStack marginTop={spacing.xxlarge}>
+        <Text fontSize={fontSize.xxlarge} color={colors.text} fontWeight="bold">
+          QuickExtender Pro
+        </Text>
+        <Text 
+          fontSize={fontSize.small} 
+          color={colors.textMuted} 
+          marginTop={spacing.xs}
+        >
+          PROGRESS TRACKER
+        </Text>
+      </YStack>
+      
+      <StatCard 
+        stats={stats} 
+        marginTop={spacing.xlarge}
+      />
+      
+      <YStack flex={1} justifyContent="center" alignItems="center">
+        <Text color={colors.textMuted}>Hour tracker grid will go here</Text>
+      </YStack>
+      
+      <AppButton 
+        label="Log Session" 
+        variant="primary"
+        size="large"
+        fullWidth
+        marginBottom={spacing.medium}
+        onPress={() => console.log('Button pressed')}
+      />
+    </YStack>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <TamaguiProvider config={config} defaultTheme="dark">
+      <ThemeProvider>
+        <StatusBar style="light" />
+        <HomeScreen />
+      </ThemeProvider>
+    </TamaguiProvider>
+  );
+}
