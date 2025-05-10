@@ -37,3 +37,23 @@ export function calculateStreak(sessions: SessionData[]): string {
 
   return `${streak} day streak`;
 }
+
+/**
+ * Format time since last session (e.g. "1h ago", "2d ago")
+ * @param sessions The array of session data
+ * @returns A formatted string indicating time since last session
+ */
+export function getTimeSinceLastSession(sessions: SessionData[]): string {
+  if (sessions.length === 0) return "No sessions yet";
+
+  const lastSessionDate = new Date(sessions[0].date);
+  const now = new Date();
+  const diffHours = Math.round((now.getTime() - lastSessionDate.getTime()) / (1000 * 60 * 60));
+
+  if (diffHours < 1) return "Just now";
+  if (diffHours === 1) return "1h ago";
+  if (diffHours < 24) return `${diffHours}h ago`;
+
+  const diffDays = Math.floor(diffHours / 24);
+  return `${diffDays}d ago`;
+}

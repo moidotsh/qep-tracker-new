@@ -1,0 +1,127 @@
+// components/Layout/PageContainer.tsx
+import React from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { useWindowDimensions, RefreshControl, RefreshControlProps } from 'react-native';
+import { ScrollView, View } from 'tamagui';
+import { useAppTheme } from '../ThemeProvider';
+
+interface PageContainerProps {
+    /**
+     * The content to display within the page
+     */
+    children: React.ReactNode;
+
+    /**
+     * Whether to disable scrolling
+     */
+    disableScroll?: boolean;
+
+    /**
+     * Custom padding horizontal
+     */
+    paddingHorizontal?: number | string;
+
+    /**
+     * Custom padding top
+     */
+    paddingTop?: number | string;
+
+    /**
+     * Custom padding bottom
+     */
+    paddingBottom?: number | string;
+
+    /**
+     * Whether to show vertical scroll indicator
+     */
+    showsVerticalScrollIndicator?: boolean;
+
+    /**
+     * ScrollView refresh control
+     */
+    refreshControl?: React.ReactElement<RefreshControlProps>;
+
+    /**
+     * Whether to adjust for keyboard
+     */
+    keyboardAware?: boolean;
+
+    /**
+     * Style for the scroll view content container
+     */
+    contentContainerStyle?: any;
+
+    /**
+     * Status bar style
+     */
+    statusBarStyle?: 'light' | 'dark';
+}
+
+/**
+ * A consistent container for all pages in the app
+ */
+export default function PageContainer({
+    children,
+    disableScroll = false,
+    paddingHorizontal,
+    paddingTop,
+    paddingBottom,
+    showsVerticalScrollIndicator = false,
+    refreshControl,
+    keyboardAware = false,
+    contentContainerStyle,
+    statusBarStyle = 'light',
+}: PageContainerProps) {
+    const { colors, spacing } = useAppTheme();
+    const { width } = useWindowDimensions();
+    const isNarrow = width < 350;
+
+    // Define default padding values
+    const defaultPaddingHorizontal = paddingHorizontal !== undefined ? paddingHorizontal : (isNarrow ? 16 : 20);
+    const defaultPaddingTop = paddingTop !== undefined ? paddingTop : (isNarrow ? 16 : 20);
+    const defaultPaddingBottom = paddingBottom !== undefined ? paddingBottom : 16;
+
+
+    // Content container style with default padding
+    const defaultContentContainerStyle = {
+        paddingTop: defaultPaddingTop,
+        paddingBottom: defaultPaddingBottom,
+        paddingHorizontal: defaultPaddingHorizontal,
+        ...(contentContainerStyle || {})
+    };
+
+    // If scrolling is disabled, render in a View
+    if (disableScroll) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: colors.background,
+                    ...defaultContentContainerStyle
+                }}
+            >
+                <StatusBar style={statusBarStyle} />
+                {children}
+            </View>
+        );
+    }
+
+    // Otherwise render in a ScrollView
+    return (
+        <ScrollView
+            style={{
+                flex: 1,
+                backgroundColor: colors.background
+            }}
+            contentContainerStyle={defaultContentContainerStyle}
+            showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+            scrollEventThrottle={16}
+            keyboardDismissMode={keyboardAware ? 'on-drag' : 'none'}
+            keyboardShouldPersistTaps={keyboardAware ? 'handled' : 'never'}
+            refreshControl={refreshControl}
+        >
+            <StatusBar style={statusBarStyle} />
+            {children}
+        </ScrollView>
+    );
+}

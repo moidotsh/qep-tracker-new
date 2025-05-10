@@ -1,5 +1,6 @@
 // hooks/useTrainingData.tsx
 import { useState, useEffect, useCallback } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import { 
   totalTrainingHours, 
   loadTrainingData, 
@@ -7,58 +8,92 @@ import {
   getSessions,
   initializeWithExampleData 
 } from '../data/trainingData';
+import { 
+  getCurrentStageProgress, 
+  setTotalTrainingHours 
+} from '../components/HourTracker/HourTrackerLogic';
+
+// hooks/useTrainingData.tsx
+// Add error state and handling
 
 export function useTrainingData() {
   const [hours, setHours] = useState(totalTrainingHours);
   const [sessions, setSessions] = useState<SessionData[]>([]);
+  const [stageInfo, setStageInfo] = useState(getCurrentStageProgress());
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // Calculate percentage toward goal (simplified for now)
-  const percentage = Math.min(100, Math.round((hours / 500) * 100));
-  
-  const initializeDemo = useCallback(async () => {
-    setLoading(true);
-    try {
-      const initialSessions = await initializeWithExampleData();
-      setSessions(initialSessions);
-      
-      // Update hours after initialization
-      const currentHours = await loadTrainingData();
-      setHours(currentHours);
-    } catch (error) {
-      console.error('Error initializing demo data:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
   // Load training data when the component mounts
   const loadData = useCallback(async () => {
     setLoading(true);
+    setError(null);
+    
     try {
       // Load the hours from storage
       const currentHours = await loadTrainingData();
       setHours(currentHours);
+      
+      // Update the HourTrackerLogic with the loaded hours
+      setTotalTrainingHours(currentHours);
+      
+      // Update the stage info
+      setStageInfo(getCurrentStageProgress());
       
       // Load sessions
       const sessionData = await getSessions();
       setSessions(sessionData);
     } catch (error) {
       console.error('Error loading training data:', error);
+      setError('Failed to load data. Please try again.');
     } finally {
       setLoading(false);
     }
   }, []);
   
+  // Initialize demo data for testing
+  const initializeDemo = useCallback(async () => {
+    setLoading(true);
+    try {
+      const initialSessions = await initializeWithExampleData();
+      setSessions(initialSessions);
+      
+      // Update hours and stage info after initialization
+      const currentHours = await loadTrainingData();
+      setHours(currentHours);
+      
+      // Update the HourTrackerLogic with the loaded hours
+      setTotalTrainingHours(currentHours);
+      
+      // Update the stage info
+      setStageInfo(getCurrentStageProgress());
+    } catch (error) {
+      console.error('Error initializing demo data:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  
+  // Refresh data when app comes back to foreground
   useEffect(() => {
     loadData();
+    
+    const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        loadData();
+      }
+    });
+    
+    return () => {
+      subscription.remove();
+    };
   }, [loadData]);
   
   return {
     hours,
     sessions,
-    percentage,
+    stageInfo,
     loading,
+    error,
     refresh: loadData,
     initializeDemo
   };

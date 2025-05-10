@@ -1,12 +1,14 @@
 // app/settings.tsx
 import React, { useState } from 'react';
-import { YStack, Text, XStack, Switch, Separator } from 'tamagui';
+import { YStack, Text, XStack, Switch } from 'tamagui';
 import { Alert } from 'react-native';
-import { router } from 'expo-router';
 import { useAppTheme } from '../components/ThemeProvider';
-import { AppButton } from '../components/AppButton';
-import { Card } from '../components/Card';
+import PageContainer from '../components/Layout/PageContainer';
+import ScreenHeader from '../components/Layout/ScreenHeader';
+import SettingItem from '../components/Settings/SettingItem';
+import SettingsGroup from '../components/Settings/SettingsGroup';
 import { clearAllData } from '../data/trainingData';
+import { NavigationPath } from '../navigation';
 import { 
   Bell, 
   Moon, 
@@ -17,19 +19,14 @@ import {
   Shield, 
   ChevronRight 
 } from '@tamagui/lucide-icons';
-import { goBack, NavigationPath } from '../navigation';
+import { router } from 'expo-router';
 
 export default function SettingsScreen() {
-  const { colors, spacing, fontSize, borderRadius } = useAppTheme();
+  const { colors, spacing, fontSize } = useAppTheme();
   
   // Mock settings state
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeOnly, setDarkModeOnly] = useState(true); // Always true for now
-  
-  // Handle back button
-  const handleBack = () => {
-    goBack(NavigationPath.SETTINGS); // or PROGRESS, HISTORY, SETTINGS depending on the screen
-  };
   
   // Handle data clearing
   const handleClearData = () => {
@@ -52,213 +49,83 @@ export default function SettingsScreen() {
   };
   
   return (
-    <YStack flex={1} padding={spacing.large} backgroundColor={colors.background}>
-      {/* Header */}
-      <XStack alignItems="center" marginBottom={spacing.large}>
-        <AppButton
-          label="← Back"
-          variant="subtle"
-          size="small"
-          onPress={handleBack}
+    <PageContainer paddingHorizontal={0}>
+      <YStack paddingHorizontal={spacing.large} marginBottom={spacing.medium}>
+        <ScreenHeader
+          title="Settings"
+          currentPath={NavigationPath.SETTINGS}
         />
-        <Text 
-          fontSize={fontSize.xlarge} 
-          fontWeight="bold" 
-          color={colors.text} 
-          marginLeft={spacing.small}
-        >
-          Settings
-        </Text>
-      </XStack>
+      </YStack>
       
       {/* App Settings */}
-      <Text 
-        color={colors.textSecondary} 
-        fontSize={fontSize.small} 
-        marginLeft={spacing.small}
-        marginBottom={spacing.small}
-        style={{ textTransform: 'uppercase' }}
-      >
-        App Settings
-      </Text>
-      
-      <Card marginBottom={spacing.large}>
-        <YStack>
-          <XStack 
-            justifyContent="space-between" 
-            alignItems="center" 
-            paddingVertical={16}
-          >
-            <XStack alignItems="center" space={spacing.medium}>
-              <Bell size={24} color={colors.text} />
-              <YStack>
-                <Text color={colors.text} fontSize={fontSize.medium}>
-                  Notifications
-                </Text>
-                <Text color={colors.textMuted} fontSize={fontSize.small}>
-                  Session reminders and progress alerts
-                </Text>
-              </YStack>
-            </XStack>
-            
+      <SettingsGroup title="APP SETTINGS">
+        <SettingItem 
+          icon={<Bell />}
+          title="Notifications"
+          description="Session reminders and progress alerts"
+          rightElement={
             <Switch
               checked={notificationsEnabled}
               onCheckedChange={setNotificationsEnabled}
               backgroundColor={notificationsEnabled ? colors.buttonBackground : colors.cardAlt}
             />
-          </XStack>
-          
-          <Separator backgroundColor={colors.border} />
-          
-          <XStack 
-            justifyContent="space-between" 
-            alignItems="center" 
-            paddingVertical={16}
-          >
-            <XStack alignItems="center" space={spacing.medium}>
-              <Moon size={24} color={colors.text} />
-              <Text color={colors.text} fontSize={fontSize.medium}>
-                Dark Mode Only
-              </Text>
-            </XStack>
-            
+          }
+        />
+        
+        <SettingItem 
+          icon={<Moon />}
+          title="Dark Mode Only"
+          rightElement={
             <Switch
               checked={darkModeOnly}
               onCheckedChange={setDarkModeOnly}
               backgroundColor={darkModeOnly ? colors.buttonBackground : colors.cardAlt}
               disabled={true} // Disabled for now as we only support dark mode
             />
-          </XStack>
-        </YStack>
-      </Card>
+          }
+        />
+      </SettingsGroup>
       
       {/* Support Settings */}
-      <Text 
-        color={colors.textSecondary} 
-        fontSize={fontSize.small} 
-        marginLeft={spacing.small}
-        marginBottom={spacing.small}
-        style={{ textTransform: 'uppercase' }}
-      >
-        Support
-      </Text>
-      
-      <Card marginBottom={spacing.large}>
-        <YStack>
-          <XStack 
-            justifyContent="space-between" 
-            alignItems="center" 
-            paddingVertical={16}
-            onPress={() => console.log('Help pressed')}
-            pressStyle={{ opacity: 0.7 }}
-            cursor="pointer"
-          >
-            <XStack alignItems="center" space={spacing.medium}>
-              <HelpCircle size={24} color={colors.text} />
-              <Text color={colors.text} fontSize={fontSize.medium}>
-                Help & Support
-              </Text>
-            </XStack>
-            
-            <ChevronRight size={18} color={colors.textMuted} />
-          </XStack>
-          
-          <Separator backgroundColor={colors.border} />
-          
-          <XStack 
-            justifyContent="space-between" 
-            alignItems="center" 
-            paddingVertical={16}
-            onPress={() => console.log('Contact pressed')}
-            pressStyle={{ opacity: 0.7 }}
-            cursor="pointer"
-          >
-            <XStack alignItems="center" space={spacing.medium}>
-              <Mail size={24} color={colors.text} />
-              <Text color={colors.text} fontSize={fontSize.medium}>
-                Contact Us
-              </Text>
-            </XStack>
-            
-            <ChevronRight size={18} color={colors.textMuted} />
-          </XStack>
-          
-          <Separator backgroundColor={colors.border} />
-          
-          <XStack 
-            justifyContent="space-between" 
-            alignItems="center" 
-            paddingVertical={16}
-            onPress={() => console.log('Privacy pressed')}
-            pressStyle={{ opacity: 0.7 }}
-            cursor="pointer"
-          >
-            <XStack alignItems="center" space={spacing.medium}>
-              <Shield size={24} color={colors.text} />
-              <Text color={colors.text} fontSize={fontSize.medium}>
-                Privacy Policy
-              </Text>
-            </XStack>
-            
-            <ChevronRight size={18} color={colors.textMuted} />
-          </XStack>
-        </YStack>
-      </Card>
+      <SettingsGroup title="SUPPORT">
+        <SettingItem 
+          icon={<HelpCircle />}
+          title="Help & Support"
+          rightElement={<ChevronRight size={18} color={colors.textMuted} />}
+          onPress={() => console.log('Help pressed')}
+        />
+        
+        <SettingItem 
+          icon={<Mail />}
+          title="Contact Us"
+          rightElement={<ChevronRight size={18} color={colors.textMuted} />}
+          onPress={() => console.log('Contact pressed')}
+        />
+        
+        <SettingItem 
+          icon={<Shield />}
+          title="Privacy Policy"
+          rightElement={<ChevronRight size={18} color={colors.textMuted} />}
+          onPress={() => console.log('Privacy pressed')}
+        />
+      </SettingsGroup>
       
       {/* Account Settings */}
-      <Text 
-        color={colors.textSecondary} 
-        fontSize={fontSize.small} 
-        marginLeft={spacing.small}
-        marginBottom={spacing.small}
-        style={{ textTransform: 'uppercase' }}
-      >
-        Account
-      </Text>
-      
-      <Card marginBottom={spacing.large}>
-        <YStack>
-          {/* In a real app, this would log the user out */}
-          <XStack 
-            justifyContent="space-between" 
-            alignItems="center" 
-            paddingVertical={16}
-            onPress={() => console.log('Log out pressed')}
-            pressStyle={{ opacity: 0.7 }}
-            cursor="pointer"
-          >
-            <XStack alignItems="center" space={spacing.medium}>
-              <LogOut size={24} color={colors.text} />
-              <Text color={colors.text} fontSize={fontSize.medium}>
-                Log Out
-              </Text>
-            </XStack>
-          </XStack>
-          
-          <Separator backgroundColor={colors.border} />
-          
-          <XStack 
-            justifyContent="space-between" 
-            alignItems="center" 
-            paddingVertical={16}
-            onPress={handleClearData}
-            pressStyle={{ opacity: 0.7 }}
-            cursor="pointer"
-          >
-            <XStack alignItems="center" space={spacing.medium}>
-              <Trash2 size={24} color="#FF3B30" />
-              <YStack>
-                <Text color="#FF3B30" fontSize={fontSize.medium}>
-                  Clear All Data
-                </Text>
-                <Text color={colors.textMuted} fontSize={fontSize.small}>
-                  This action cannot be undone
-                </Text>
-              </YStack>
-            </XStack>
-          </XStack>
-        </YStack>
-      </Card>
+      <SettingsGroup title="ACCOUNT">
+        <SettingItem 
+          icon={<LogOut />}
+          title="Log Out"
+          onPress={() => console.log('Log out pressed')}
+        />
+        
+        <SettingItem 
+          icon={<Trash2 />}
+          title="Clear All Data"
+          description="This action cannot be undone"
+          destructive
+          onPress={handleClearData}
+        />
+      </SettingsGroup>
       
       {/* Version */}
       <YStack alignItems="center" marginTop={40}>
@@ -266,6 +133,6 @@ export default function SettingsScreen() {
           Version 1.0.0
         </Text>
       </YStack>
-    </YStack>
+    </PageContainer>
   );
 }

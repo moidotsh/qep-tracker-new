@@ -5,10 +5,9 @@ import { Zap, Settings } from '@tamagui/lucide-icons';
 import { useAppTheme } from '../ThemeProvider';
 import { navigateToSettings } from '../../navigation';
 import { FormattedDate } from '../FormattedDate';
-import { format } from 'date-fns';
 
 interface HomeHeaderProps {
-  formattedDate?: string;
+  formattedDate: string;
   isDemoInitialized: boolean;
   handleInitializeDemo: () => Promise<void>;
   streak: string;
@@ -16,7 +15,7 @@ interface HomeHeaderProps {
 }
 
 export function HomeHeader({ 
-  formattedDate = format(new Date(), 'MMMM d, yyyy'), 
+  formattedDate, 
   isDemoInitialized, 
   handleInitializeDemo,
   streak,

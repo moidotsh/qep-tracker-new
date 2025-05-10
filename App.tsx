@@ -1,68 +1,34 @@
-import React from 'react';
+// App.tsx
 import { StatusBar } from 'expo-status-bar';
 import { TamaguiProvider, YStack, Text } from 'tamagui';
 import config from './tamagui.config';
 import { ThemeProvider } from './components/ThemeProvider';
-import { useAppTheme } from './components/ThemeProvider';
-import { AppButton } from './components/AppButton';
-import { StatCard } from './components/StatCard';
-
-function HomeScreen() {
-  const { colors, fontSize, spacing } = useAppTheme();
-  
-  // Example stats
-  const stats = [
-    { label: 'Total', value: '0h' },
-    { label: 'Goal', value: '0%' },
-    { label: 'Trained', value: 'Never' }
-  ];
-  
-  return (
-    <YStack 
-      flex={1} 
-      backgroundColor={colors.background} 
-      padding={spacing.large}
-    >
-      <YStack marginTop={spacing.xxlarge}>
-        <Text fontSize={fontSize.xxlarge} color={colors.text} fontWeight="bold">
-          QuickExtender Pro
-        </Text>
-        <Text 
-          fontSize={fontSize.small} 
-          color={colors.textMuted} 
-          marginTop={spacing.xs}
-        >
-          PROGRESS TRACKER
-        </Text>
-      </YStack>
-      
-      <StatCard 
-        stats={stats} 
-        marginTop={spacing.xlarge}
-      />
-      
-      <YStack flex={1} justifyContent="center" alignItems="center">
-        <Text color={colors.textMuted}>Hour tracker grid will go here</Text>
-      </YStack>
-      
-      <AppButton 
-        label="Log Session" 
-        variant="primary"
-        size="large"
-        fullWidth
-        marginBottom={spacing.medium}
-        onPress={() => console.log('Button pressed')}
-      />
-    </YStack>
-  );
-}
+import { useEffect } from 'react';
 
 export default function App() {
+  // This helps ensure Tamagui styles are properly applied on web
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.remove('light-theme');
+      document.documentElement.classList.add('dark-theme');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  }, []);
+  
   return (
     <TamaguiProvider config={config} defaultTheme="dark">
       <ThemeProvider>
-        <StatusBar style="light" />
-        <HomeScreen />
+        <YStack 
+          flex={1} 
+          backgroundColor="$background" 
+          alignItems="center" 
+          justifyContent="center"
+        >
+          <Text fontSize={30} fontWeight="bold" color="$color">
+            QuickExtender Pro Tracker
+          </Text>
+          <StatusBar style="light" />
+        </YStack>
       </ThemeProvider>
     </TamaguiProvider>
   );

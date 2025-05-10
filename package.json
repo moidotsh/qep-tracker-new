@@ -17,6 +17,7 @@
     "@tamagui/lucide-icons": "^1.126.9",
     "@tamagui/shorthands": "^1.126.9",
     "@tamagui/themes": "^1.126.9",
+    "babel-plugin-module-resolver": "^5.0.2",
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "date-fns": "^4.1.0",
     "expo": "~53.0.9",
