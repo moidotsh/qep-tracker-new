@@ -11,14 +11,15 @@ import {
 export interface HourTrackerRowProps {
   row: number;
   cellSize: number;
+  forceVisible?: boolean; // Added this prop
 }
 
-export default function HourTrackerRow({ row, cellSize }: HourTrackerRowProps) {
+export default function HourTrackerRow({ row, cellSize, forceVisible = false }: HourTrackerRowProps) {
   const rowCells = [];
   const isWeb = Platform.OS === 'web';
   
-  // If on web, ensure cellSize is never too small
-  const finalCellSize = isWeb ? Math.max(cellSize, 28) : cellSize;
+  // If forceVisible is true or on web, ensure cellSize is never too small
+  const finalCellSize = forceVisible && isWeb ? Math.max(cellSize, 28) : cellSize;
   
   for (let col = 0; col < GRID_COLUMNS; col++) {
     const cellIndex = row * GRID_COLUMNS + col;
@@ -41,6 +42,7 @@ export default function HourTrackerRow({ row, cellSize }: HourTrackerRowProps) {
         showPartial={showPartial}
         partialHeightRatio={partialHeightRatio}
         isFullyFilled={isFullyFilled}
+        forceVisible={forceVisible}
       />
     );
   }

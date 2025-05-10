@@ -6,7 +6,7 @@ import PageContainer from '../components/Layout/PageContainer';
 import ScreenHeader from '../components/Layout/ScreenHeader';
 import ProgressDetail from '../components/Stats/ProgressDetail';
 import StatIconCard from '../components/Stats/StatIconCard';
-import { AppButton } from '../components/AppButton';
+import AppButton from '@components/Button/AppButton';
 import { useTrainingData } from '../hooks/useTrainingData';
 import { NavigationPath, navigateToLogSession } from '../navigation';
 import { TrendingUp, CheckCircle, Clock, Plus } from '@tamagui/lucide-icons';

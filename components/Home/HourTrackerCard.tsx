@@ -1,6 +1,6 @@
-// components/Home/HourTrackerCard.tsx (update the implementation)
+// components/Home/HourTrackerCard.tsx
 import React from 'react';
-import { YStack, XStack, Text, Card } from 'tamagui';
+import { XStack, YStack, Card, Text } from 'tamagui';
 import { useAppTheme } from '../ThemeProvider';
 import HourTrackerGridPreview from '../HourTracker/HourTrackerGridPreview';
 import { navigateToLogSession } from '../../navigation';
@@ -18,11 +18,11 @@ export function HourTrackerCard({ stageName, percentage, onShowFullGrid }: HourT
     <Card
       backgroundColor={colors.card}
       borderRadius={borderRadius.medium}
-      marginTop={spacing.large}
+      marginTop={spacing.medium} 
       marginBottom={spacing.large}
       paddingHorizontal={spacing.large}
       paddingVertical={spacing.large}
-      elevation={2}
+      elevate
     >
       {/* Title */}
       <Text

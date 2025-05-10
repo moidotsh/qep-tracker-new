@@ -4,7 +4,6 @@ import { XStack, YStack, Text, Button } from 'tamagui';
 import { Zap, Settings } from '@tamagui/lucide-icons';
 import { useAppTheme } from '../ThemeProvider';
 import { navigateToSettings } from '../../navigation';
-import { FormattedDate } from '../FormattedDate';
 
 interface HomeHeaderProps {
   formattedDate: string;
@@ -15,16 +14,16 @@ interface HomeHeaderProps {
 }
 
 export function HomeHeader({ 
-  formattedDate, 
-  isDemoInitialized, 
-  handleInitializeDemo,
-  streak,
-  loading
-}: HomeHeaderProps) {
-  const { colors, spacing } = useAppTheme();
+    formattedDate, 
+    isDemoInitialized, 
+    handleInitializeDemo,
+    streak,
+    loading
+  }: HomeHeaderProps) {
+    const { colors, spacing } = useAppTheme();
   
-  return (
-    <YStack>
+    return (
+      <YStack paddingBottom={spacing.medium}> {/* Changed from spacing.small to spacing.medium */}
       <XStack alignItems="center" justifyContent="space-between">
         <Text
           color={colors.text}
@@ -38,10 +37,14 @@ export function HomeHeader({
             size="$3"
             circular
             icon={<Zap size={22} color={isDemoInitialized ? '#00c896' : colors.textMuted} />}
-            backgroundColor={isDemoInitialized ? 'rgba(0, 200, 150, 0.2)' : 'transparent'}
+            backgroundColor="transparent"
             onPress={handleInitializeDemo}
             pressStyle={{ opacity: 0.7 }}
             marginRight={spacing.small}
+            // Add a success hint when demo data is initialized
+            {...(isDemoInitialized && {
+              backgroundColor: 'rgba(0, 200, 150, 0.2)',
+            })}
           />
           <Button
             size="$3"
@@ -81,7 +84,16 @@ export function HomeHeader({
 
       <YStack paddingTop={spacing.medium}>
         <XStack justifyContent='space-between' alignItems='center' width='100%'>
-          <FormattedDate date={formattedDate} />
+          <Text
+            color={colors.text}
+            fontSize={13}
+            fontWeight={300}
+            style={{
+              letterSpacing: 1.1,
+            }}
+          >
+            {formattedDate}
+          </Text>
           <Text
             color={colors.textMuted}
             fontSize={13}
@@ -94,3 +106,5 @@ export function HomeHeader({
     </YStack>
   );
 }
+
+export default HomeHeader;

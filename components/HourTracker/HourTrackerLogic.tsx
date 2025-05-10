@@ -1,9 +1,7 @@
 // components/HourTracker/HourTrackerLogic.ts
 // Calculate and track progress through the program stages
 
-// For now we'll use a global variable for tracking total hours
-// In a real implementation, this would be stored in AsyncStorage or similar
-let totalTrainingHours = 0;
+import { totalTrainingHours } from '../../data/trainingData';
 
 // Type for tracking cell status
 export type CellStatus = 'empty' | 'filled' | 'blue' | 'orange' | 'green';
@@ -20,7 +18,7 @@ export const PROGRAM_STAGES: ProgramStage[] = [
   {
     name: "Adaptation 1",
     startCell: 0,  // Cell 1 (0-indexed)
-    endCell: 2,    // Cell 2
+    endCell: 1,    // Cell 2
   },
   {
     name: "Adaptation 2",
@@ -136,13 +134,6 @@ export function darkenColor(hex: string, amount = 100): string {
     const g = clamp(((num >> 8) & 0x00FF) - amount);
     const b = clamp((num & 0x0000FF) - amount);
     return `rgb(${r},${g},${b})`;
-}
-
-/**
- * Set the total training hours - normally called from outside
- */
-export function setTotalTrainingHours(hours: number) {
-    totalTrainingHours = hours;
 }
 
 /**
@@ -266,6 +257,22 @@ export function getCellRenderingProps(cellIndex: number) {
         isFullyFilled,
         isPartial
     };
+}
+
+/**
+ * Generate a zebra pattern for already used time
+ */
+export function getZebraPattern(usedPercentage: number, isWeb: boolean): string | undefined {
+    if (usedPercentage <= 0) {
+        return undefined;
+    }
+    
+    if (isWeb) {
+        return 'repeating-linear-gradient(45deg, rgba(0,0,0,0), rgba(0,0,0,0) 5px, rgba(0,0,0,0.2) 5px, rgba(0,0,0,0.2) 10px)';
+    } else {
+        // For native, we'll return undefined and handle with regular background color
+        return undefined;
+    }
 }
 
 /**

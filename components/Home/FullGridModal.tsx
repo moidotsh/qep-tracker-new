@@ -1,7 +1,7 @@
 // components/Home/FullGridModal.tsx
 import React from 'react';
 import { Modal as RNModal, useWindowDimensions, Platform } from 'react-native';
-import { YStack, XStack, Button, Text, ScrollView } from 'tamagui';
+import { YStack, XStack, Button, Text, ScrollView, View } from 'tamagui';
 import { X } from '@tamagui/lucide-icons';
 import { useAppTheme } from '../ThemeProvider';
 import HourTrackerRow from '../HourTracker/HourTrackerRow';
@@ -15,7 +15,7 @@ interface FullGridModalProps {
 }
 
 export function FullGridModal({ visible, onClose, stageName, percentage }: FullGridModalProps) {
-  const { colors, spacing, fontSize, borderRadius } = useAppTheme();
+  const { colors, spacing, fontSize, borderRadius, constrainedView } = useAppTheme();
   const { width } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
 
@@ -30,6 +30,12 @@ export function FullGridModal({ visible, onClose, stageName, percentage }: FullG
         flex={1}
         backgroundColor={"rgba(0,0,0,0.85)"}
         justifyContent="flex-end"
+        // Add constraints for web
+        style={isWeb && constrainedView ? {
+          maxWidth: 480,
+          alignSelf: "center",
+          width: "100%"
+        } : undefined}
       >
         <YStack
           backgroundColor={colors.card}
@@ -38,6 +44,20 @@ export function FullGridModal({ visible, onClose, stageName, percentage }: FullG
           borderTopRightRadius={20}
           // Adjust modal height based on platform
           height={isWeb ? "85%" : "92%"}
+          // On web, with constrained view
+          {...(isWeb && constrainedView ? {
+            maxWidth: 480,
+            alignSelf: "center",
+            width: "100%",
+            borderRadius: 20,
+            marginBottom: 40
+          } : isWeb ? {
+            maxWidth: 800,
+            alignSelf: "center",
+            width: "100%",
+            borderRadius: 20,
+            marginBottom: 40
+          } : {})}
         >
           {/* Handle Bar at top */}
           <YStack
@@ -84,13 +104,10 @@ export function FullGridModal({ visible, onClose, stageName, percentage }: FullG
             </XStack>
           </YStack>
 
-          {/* Grid content */}
+          {/* Grid content - NO outer border, just the scroll container */}
           <YStack
             flex={1}
             overflow="hidden"
-            borderWidth={1}
-            borderColor={colors.border}
-            borderRadius={10}
             marginHorizontal={spacing.large}
             marginBottom={spacing.large}
           >
@@ -102,13 +119,14 @@ export function FullGridModal({ visible, onClose, stageName, percentage }: FullG
               }}
               showsVerticalScrollIndicator={true}
             >
-              {/* Grid rows */}
+              {/* Grid rows without the outer border container */}
               <YStack alignItems="center" padding={spacing.medium}>
                 {Array.from({ length: GRID_ROWS }).map((_, rowIndex) => (
                   <HourTrackerRow
                     key={`row-${rowIndex}`}
                     row={rowIndex}
                     cellSize={40}
+                    forceVisible={true}
                   />
                 ))}
               </YStack>

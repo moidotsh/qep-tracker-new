@@ -8,13 +8,7 @@ import {
   getSessions,
   initializeWithExampleData 
 } from '../data/trainingData';
-import { 
-  getCurrentStageProgress, 
-  setTotalTrainingHours 
-} from '../components/HourTracker/HourTrackerLogic';
-
-// hooks/useTrainingData.tsx
-// Add error state and handling
+import { getCurrentStageProgress } from '../components/HourTracker/HourTrackerLogic';
 
 export function useTrainingData() {
   const [hours, setHours] = useState(totalTrainingHours);
@@ -27,16 +21,10 @@ export function useTrainingData() {
   const loadData = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
     try {
       // Load the hours from storage
       const currentHours = await loadTrainingData();
       setHours(currentHours);
-      
-      // Update the HourTrackerLogic with the loaded hours
-      setTotalTrainingHours(currentHours);
-      
-      // Update the stage info
       setStageInfo(getCurrentStageProgress());
       
       // Load sessions
@@ -60,11 +48,6 @@ export function useTrainingData() {
       // Update hours and stage info after initialization
       const currentHours = await loadTrainingData();
       setHours(currentHours);
-      
-      // Update the HourTrackerLogic with the loaded hours
-      setTotalTrainingHours(currentHours);
-      
-      // Update the stage info
       setStageInfo(getCurrentStageProgress());
     } catch (error) {
       console.error('Error initializing demo data:', error);

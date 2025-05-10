@@ -5,7 +5,7 @@ import { useAppTheme } from '../components/ThemeProvider';
 import PageContainer from '../components/Layout/PageContainer';
 import ScreenHeader from '../components/Layout/ScreenHeader';
 import SessionList from '../components/Sessions/SessionList';
-import { AppButton } from '../components/AppButton';
+import AppButton from '@components/Button/AppButton';
 import { NavigationPath, navigateToLogSession } from '../navigation';
 import { useTrainingData } from '../hooks/useTrainingData';
 import { Plus } from '@tamagui/lucide-icons';

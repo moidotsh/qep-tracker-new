@@ -57,3 +57,23 @@ export function getTimeSinceLastSession(sessions: SessionData[]): string {
   const diffDays = Math.floor(diffHours / 24);
   return `${diffDays}d ago`;
 }
+
+/**
+ * Format duration in a human-readable way
+ * @param minutes Total duration in minutes
+ * @returns Formatted duration string (e.g. "2h 30m")
+ */
+export function formatDuration(minutes: number): string {
+  if (minutes < 60) {
+    return `${minutes}m`;
+  }
+  
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  
+  if (remainingMinutes === 0) {
+    return `${hours}h`;
+  }
+  
+  return `${hours}h ${remainingMinutes}m`;
+}

@@ -31,9 +31,9 @@ interface SettingsGroupProps {
 }
 
 /**
- * Group of related settings items with a card container
+ * Group of related settings items with a card container - card style version
  */
-export default function SettingsGroup({
+export function SettingsGroup({
   children,
   title,
   footer,
@@ -55,7 +55,7 @@ export default function SettingsGroup({
   });
   
   return (
-    <YStack marginTop={marginTop} marginBottom={marginBottom}>
+    <YStack marginTop={marginTop} marginBottom={marginBottom} paddingHorizontal={16}>
       {title && (
         <Text
           color={colors.textSecondary}
@@ -72,7 +72,7 @@ export default function SettingsGroup({
       <Card
         backgroundColor={colors.card}
         borderRadius={borderRadius.medium}
-        elevation={2}
+        elevate
         marginBottom={spacing.small}
         overflow="hidden"
       >
@@ -92,3 +92,5 @@ export default function SettingsGroup({
     </YStack>
   );
 }
+
+export default SettingsGroup;

@@ -43,7 +43,7 @@ interface StatIconCardProps {
 /**
  * A card that displays a stat with an icon
  */
-export default function StatIconCard({
+export function StatIconCard({
   value,
   label,
   icon,
@@ -71,7 +71,7 @@ export default function StatIconCard({
     >
       <Circle 
         size={50} 
-        backgroundColor="#222222"
+        backgroundColor="#222222" // Darker color to match design
       >
         {iconElement}
       </Circle>
@@ -88,7 +88,7 @@ export default function StatIconCard({
           <Text 
             color={colors.text} 
             fontSize={fontSize.xlarge}
-            fontWeight="700"
+            fontWeight="700" // Bolder to match design
           >
             {loading ? '...' : value}
           </Text>
@@ -116,3 +116,5 @@ export default function StatIconCard({
     </XStack>
   );
 }
+
+export default StatIconCard;

@@ -55,12 +55,17 @@ interface PageContainerProps {
      * Status bar style
      */
     statusBarStyle?: 'light' | 'dark';
+
+    /**
+     * Additional style props to apply
+     */
+    style?: any;
 }
 
 /**
- * A consistent container for all pages in the app
+ * A consistent container for all pages in the app - improved with better padding control
  */
-export default function PageContainer({
+export function PageContainer({
     children,
     disableScroll = false,
     paddingHorizontal,
@@ -71,15 +76,16 @@ export default function PageContainer({
     keyboardAware = false,
     contentContainerStyle,
     statusBarStyle = 'light',
+    style
 }: PageContainerProps) {
     const { colors, spacing } = useAppTheme();
     const { width } = useWindowDimensions();
     const isNarrow = width < 350;
 
-    // Define default padding values
-    const defaultPaddingHorizontal = paddingHorizontal !== undefined ? paddingHorizontal : (isNarrow ? 16 : 20);
-    const defaultPaddingTop = paddingTop !== undefined ? paddingTop : (isNarrow ? 16 : 20);
-    const defaultPaddingBottom = paddingBottom !== undefined ? paddingBottom : 16;
+    // Increased default padding values
+    const defaultPaddingHorizontal = paddingHorizontal !== undefined ? paddingHorizontal : (isNarrow ? 20 : 24);
+    const defaultPaddingTop = paddingTop !== undefined ? paddingTop : (isNarrow ? 24 : 32);
+    const defaultPaddingBottom = paddingBottom !== undefined ? paddingBottom : 24;
 
 
     // Content container style with default padding
@@ -94,11 +100,14 @@ export default function PageContainer({
     if (disableScroll) {
         return (
             <View
-                style={{
-                    flex: 1,
-                    backgroundColor: colors.background,
-                    ...defaultContentContainerStyle
-                }}
+                style={[
+                    {
+                        flex: 1,
+                        backgroundColor: colors.background,
+                        ...defaultContentContainerStyle
+                    },
+                    style
+                ]}
             >
                 <StatusBar style={statusBarStyle} />
                 {children}
@@ -109,10 +118,13 @@ export default function PageContainer({
     // Otherwise render in a ScrollView
     return (
         <ScrollView
-            style={{
-                flex: 1,
-                backgroundColor: colors.background
-            }}
+            style={[
+                {
+                    flex: 1,
+                    backgroundColor: colors.background
+                },
+                style
+            ]}
             contentContainerStyle={defaultContentContainerStyle}
             showsVerticalScrollIndicator={showsVerticalScrollIndicator}
             scrollEventThrottle={16}
@@ -125,3 +137,5 @@ export default function PageContainer({
         </ScrollView>
     );
 }
+
+export default PageContainer;

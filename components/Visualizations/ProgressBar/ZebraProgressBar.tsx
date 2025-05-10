@@ -54,7 +54,7 @@ interface ZebraProgressBarProps {
 /**
  * A progress bar that supports showing already used portions with a zebra pattern
  */
-export default function ZebraProgressBar({
+export function ZebraProgressBar({
   value,
   maxValue,
   usedValue = 0,
@@ -136,3 +136,5 @@ export default function ZebraProgressBar({
     </YStack>
   );
 }
+
+export default ZebraProgressBar;

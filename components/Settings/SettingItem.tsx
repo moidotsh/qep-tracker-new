@@ -36,9 +36,9 @@ interface SettingItemProps {
 }
 
 /**
- * Standard setting item component for use in settings screens
+ * Standard setting item component for use in settings screens - with correct spacing
  */
-export default function SettingItem({
+export function SettingItem({
   icon,
   title,
   description = '',
@@ -51,6 +51,7 @@ export default function SettingItem({
   return (
     <YStack
       padding={spacing.medium}
+      paddingVertical={16} // More vertical padding to match design
       pressStyle={onPress ? { opacity: 0.7 } : undefined}
       onPress={onPress}
       cursor={onPress ? 'pointer' : 'default'}
@@ -59,8 +60,8 @@ export default function SettingItem({
         <XStack alignItems="center" space={spacing.medium}>
           {React.isValidElement(icon) && 
             React.cloneElement(icon as React.ReactElement<{ size?: number; color?: string }>, { 
-              size: 24, 
-              color: destructive ? '#FF3B30' : colors.text 
+              size: 24, // Slightly larger icon to match design
+              color: destructive ? '#FF3B30' : colors.text // Exact red color for destructive
             })
           }
           
@@ -77,6 +78,7 @@ export default function SettingItem({
               <Text 
                 color={colors.textMuted} 
                 fontSize={fontSize.small}
+                marginTop={2} // Small gap to match design
               >
                 {description}
               </Text>
@@ -84,10 +86,13 @@ export default function SettingItem({
           </YStack>
         </XStack>
         
-        <View>
+        {/* Add more spacing around the right element */}
+        <View paddingLeft={spacing.medium}>
           {rightElement}
         </View>
       </XStack>
     </YStack>
   );
 }
+
+export default SettingItem;

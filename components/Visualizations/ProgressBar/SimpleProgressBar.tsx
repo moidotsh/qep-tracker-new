@@ -48,7 +48,7 @@ interface SimpleProgressBarProps {
 /**
  * A simple progress bar for showing completion percentage
  */
-export default function SimpleProgressBar({
+export function SimpleProgressBar({
   percentage,
   showPercentage = false,
   height = 10,
@@ -118,3 +118,5 @@ export default function SimpleProgressBar({
     </YStack>
   );
 }
+
+export default SimpleProgressBar;

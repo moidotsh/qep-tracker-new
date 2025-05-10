@@ -1,10 +1,9 @@
-// data/trainingData.ts - Update with integration
+// data/trainingData.ts
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
-import { setTotalTrainingHours } from '../components/HourTracker/HourTrackerLogic';
 
 // Default value if no saved data exists
-export let totalTrainingHours = 0;
+export let totalTrainingHours = 2.5;
 
 // Session data type with simplified structure
 export interface SessionData {
@@ -20,14 +19,23 @@ const STORAGE_KEYS = {
   SESSIONS: 'qep_sessions'
 };
 
+// Create example session for today
+const createTodayExampleSession = (): SessionData => {
+  const today = new Date();
+  return {
+    id: '1',
+    date: format(today, 'MMMM d, yyyy'),
+    duration: 120, // 2 hours
+    isReminded: false
+  };
+};
+
 // Load training hours from storage
 export async function loadTrainingData() {
   try {
     const storedHours = await AsyncStorage.getItem(STORAGE_KEYS.TOTAL_HOURS);
     if (storedHours !== null) {
       totalTrainingHours = parseFloat(storedHours);
-      // Update the hour tracker logic with the loaded value
-      setTotalTrainingHours(totalTrainingHours);
     }
     return totalTrainingHours;
   } catch (error) {
@@ -41,8 +49,6 @@ export async function saveTrainingHours(hours: number) {
   try {
     totalTrainingHours = hours;
     await AsyncStorage.setItem(STORAGE_KEYS.TOTAL_HOURS, hours.toString());
-    // Update the hour tracker logic with the new value
-    setTotalTrainingHours(hours);
     return true;
   } catch (error) {
     console.error('Error saving training hours:', error);
@@ -85,8 +91,17 @@ export async function getSessions(): Promise<SessionData[]> {
   try {
     const sessionsJson = await AsyncStorage.getItem(STORAGE_KEYS.SESSIONS);
     
+    // If no sessions exist yet, initialize with an example entry
     if (!sessionsJson) {
-      return [];
+      const exampleSession = createTodayExampleSession();
+      
+      // Save the example session
+      await AsyncStorage.setItem(STORAGE_KEYS.SESSIONS, JSON.stringify([exampleSession]));
+      
+      // Initialize hours to match the sample session
+      await saveTrainingHours(exampleSession.duration / 60);
+      
+      return [exampleSession];
     }
     
     return JSON.parse(sessionsJson);
@@ -96,7 +111,7 @@ export async function getSessions(): Promise<SessionData[]> {
   }
 }
 
-// Get daily logged minutes for a specific date
+// Get total minutes logged for a specific date
 export async function getDailyLoggedMinutes(date: string): Promise<number> {
   try {
     const sessions = await getSessions();
@@ -114,14 +129,41 @@ export async function getDailyLoggedMinutes(date: string): Promise<number> {
   }
 }
 
-// Clear all data (for testing)
+// Check if adding more minutes would exceed daily limit
+export async function wouldExceedDailyLimit(date: string, additionalMinutes: number): Promise<boolean> {
+  const dailyLoggedMinutes = await getDailyLoggedMinutes(date);
+  const MAX_DAILY_MINUTES = 8 * 60; // 8 hours
+  
+  return (dailyLoggedMinutes + additionalMinutes) > MAX_DAILY_MINUTES;
+}
+
+// Get remaining available minutes for a specific date
+export async function getRemainingDailyMinutes(date: string): Promise<number> {
+  const dailyLoggedMinutes = await getDailyLoggedMinutes(date);
+  const MAX_DAILY_MINUTES = 8 * 60; // 8 hours
+  
+  return Math.max(0, MAX_DAILY_MINUTES - dailyLoggedMinutes);
+}
+
+// Get past 7 days of session data for history view
+export async function getWeekSessions(): Promise<SessionData[]> {
+  const sessions = await getSessions();
+  const now = new Date();
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(now.getDate() - 7);
+  
+  return sessions.filter(session => {
+    const sessionDate = new Date(session.date);
+    return sessionDate >= sevenDaysAgo && sessionDate <= now;
+  });
+}
+
+// Reset app data (for testing)
 export async function clearAllData() {
   try {
     await AsyncStorage.removeItem(STORAGE_KEYS.TOTAL_HOURS);
     await AsyncStorage.removeItem(STORAGE_KEYS.SESSIONS);
     totalTrainingHours = 0;
-    // Reset the hour tracker logic
-    setTotalTrainingHours(0);
     return true;
   } catch (error) {
     console.error('Error clearing data:', error);
@@ -142,29 +184,24 @@ export async function initializeWithExampleData() {
   const twoDaysAgo = new Date();
   twoDaysAgo.setDate(today.getDate() - 2);
   
-  const threeDaysAgo = new Date();
-  threeDaysAgo.setDate(today.getDate() - 3);
-  
   const sessions: SessionData[] = [
     {
       id: Date.now().toString(),
       date: format(today, 'MMMM d, yyyy'),
       duration: 120, // 2 hours
+      isReminded: false
     },
     {
       id: (Date.now() - 1000).toString(),
       date: format(yesterday, 'MMMM d, yyyy'),
       duration: 180, // 3 hours
+      isReminded: false
     },
     {
       id: (Date.now() - 2000).toString(),
       date: format(twoDaysAgo, 'MMMM d, yyyy'),
       duration: 150, // 2.5 hours
-    },
-    {
-      id: (Date.now() - 3000).toString(),
-      date: format(threeDaysAgo, 'MMMM d, yyyy'),
-      duration: 210, // 3.5 hours
+      isReminded: false
     }
   ];
   

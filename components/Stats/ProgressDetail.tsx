@@ -2,6 +2,7 @@
 import React from 'react';
 import { YStack, Text, XStack, View } from 'tamagui';
 import { useAppTheme } from '../ThemeProvider';
+import StageBadge from '@components/Badge/StageBadge';
 
 interface ProgressDetailProps {
   /**
@@ -36,9 +37,9 @@ interface ProgressDetailProps {
 }
 
 /**
- * A component for displaying detailed progress information
+ * A component for displaying detailed progress information - with clearer progress visualization
  */
-export default function ProgressDetail({
+export function ProgressDetail({
   currentSize,
   startSize,
   goalSize,
@@ -61,58 +62,56 @@ export default function ProgressDetail({
   
   return (
     <YStack space={spacing.medium}>
-      {/* Stage Badge */}
-      <XStack>
-        <Text 
-          backgroundColor="#0A84FF" 
-          color="white" 
-          fontSize={fontSize.small}
-          paddingHorizontal={spacing.medium}
-          paddingVertical={6}
-          borderRadius={50}
-        >
-          {stageName}
-        </Text>
+      {/* Stage Badge - with proper spacing */}
+      <XStack paddingVertical={spacing.small}>
+        <StageBadge stageName={stageName} type="primary" />
       </XStack>
       
-      {/* Progress Bar */}
-      <YStack width="100%" space={spacing.small}>
-        <XStack justifyContent="space-between">
-          <Text color={colors.textMuted} fontSize={fontSize.small}>
-            Start: {startSize} {unit}
+      {/* Enhanced Progress Bar - much clearer than the original subtle line */}
+      <View
+        backgroundColor="#222222" // Darker background to match design
+        borderRadius={10}
+        padding={spacing.medium}
+        marginTop={spacing.small}
+      >
+        <YStack width="100%" space={spacing.small}>
+          <XStack justifyContent="space-between">
+            <Text color={colors.textMuted} fontSize={fontSize.small}>
+              Start: {startSize} {unit}
+            </Text>
+            <Text color={colors.textMuted} fontSize={fontSize.small}>
+              Goal: {goalSize} {unit}
+            </Text>
+          </XStack>
+          
+          <View 
+            backgroundColor="#333333" // Slightly lighter than container
+            height={14} 
+            borderRadius={7} 
+            overflow="hidden"
+          >
+            <View
+              backgroundColor="#0A84FF" // Bright blue to match design
+              height="100%"
+              width={`${progressPercentage}%`}
+              borderRadius={7}
+            />
+          </View>
+          
+          <Text color={colors.text} fontSize={fontSize.small} textAlign="center">
+            {progressPercentage}%
           </Text>
-          <Text color={colors.textMuted} fontSize={fontSize.small}>
-            Goal: {goalSize} {unit}
-          </Text>
-        </XStack>
-        
-        <View 
-          backgroundColor="#222222" 
-          height={14} 
-          borderRadius={7} 
-          overflow="hidden"
-        >
-          <View
-            backgroundColor="#0A84FF"
-            height="100%"
-            width={`${progressPercentage}%`}
-            borderRadius={7}
-          />
-        </View>
-        
-        <Text color={colors.text} fontSize={fontSize.small} textAlign="center">
-          {progressPercentage}%
-        </Text>
-      </YStack>
+        </YStack>
+      </View>
       
-      {/* Current size display */}
+      {/* Current size display - with increased margin and larger font */}
       <YStack alignItems="center" marginTop={spacing.xlarge} marginBottom={spacing.large}>
         <Text color={colors.textMuted} fontSize={fontSize.medium}>
           Current
         </Text>
         <Text
           color={colors.text}
-          fontSize={32}
+          fontSize={32} // Larger font size to match design
           fontWeight="700"
           marginTop={spacing.small}
         >
@@ -122,3 +121,5 @@ export default function ProgressDetail({
     </YStack>
   );
 }
+
+export default ProgressDetail;

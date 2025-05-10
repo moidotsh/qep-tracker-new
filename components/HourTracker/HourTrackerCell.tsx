@@ -11,6 +11,7 @@ export interface HourTrackerCellProps {
   showPartial?: boolean;
   partialHeightRatio?: number;
   isFullyFilled?: boolean;
+  forceVisible?: boolean;
 }
 
 export default function HourTrackerCell({
@@ -20,7 +21,8 @@ export default function HourTrackerCell({
   borderWidth,
   showPartial = false,
   partialHeightRatio = 0,
-  isFullyFilled = false
+  isFullyFilled = false,
+  forceVisible = false
 }: HourTrackerCellProps) {
   const isWeb = Platform.OS === 'web';
   
@@ -28,7 +30,7 @@ export default function HourTrackerCell({
   const MIN_SIZE = 30;
   
   // Use the provided size (responsive), but enforce minimum
-  const finalSize = isWeb ? Math.max(size, MIN_SIZE) : size;
+  const finalSize = Math.max(size, MIN_SIZE);
   
   // Choose appropriate size for text based on cell size
   const textSize = finalSize < 36 ? 11 : (finalSize < 44 ? 13 : 15);
@@ -55,6 +57,11 @@ export default function HourTrackerCell({
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
+        // Set minimum dimensions for web to ensure visibility
+        style: {
+          minWidth: MIN_SIZE,
+          minHeight: MIN_SIZE
+        }
       } : {
         elevation: 2
       })}

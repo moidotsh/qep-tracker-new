@@ -4,8 +4,9 @@ import { useWindowDimensions, Platform } from 'react-native';
 import {
   YStack,
   XStack,
-  Button,
   Text,
+  Button,
+  View,
   ScrollView
 } from 'tamagui';
 import { useAppTheme } from '../ThemeProvider';
@@ -26,7 +27,7 @@ export default function HourTrackerGridPreview({
   onShowFullGrid,
   visibleRowCount = 3
 }: HourTrackerGridPreviewProps) {
-  const { colors, spacing, fontSize, borderRadius } = useAppTheme();
+  const { colors, spacing, fontSize, borderRadius, constrainedView } = useAppTheme();
   const { width } = useWindowDimensions();
   const isNarrow = width < 350;
   const isWeb = Platform.OS === 'web';
@@ -35,15 +36,17 @@ export default function HourTrackerGridPreview({
   const [isReady, setIsReady] = useState(!isWeb); // Start ready if not web
   const initialRenderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
-  // Use fixed cell sizes to prevent cells from becoming too small
+  // Set fixed cell sizes for constrained view
   const FIXED_CELL_SIZE = 40; // Fixed minimum size for cells (ignores screen width)
   const MIN_CELL_SIZE = 32; // Never go smaller than this
   
-  // Calculate cell size based on available width
-  const cellSize = Math.max(
-    Math.floor((Math.min(width, 500) - (isNarrow ? 60 : 80)) / GRID_COLUMNS) - 2,
-    MIN_CELL_SIZE
-  );
+  // Use fixed cell sizes when in constrained view to prevent cells from becoming too small
+  const cellSize = (isWeb && constrainedView) 
+    ? FIXED_CELL_SIZE
+    : Math.max(
+        Math.floor((Math.min(width, 500) - (isNarrow ? 60 : 80)) / GRID_COLUMNS) - 2,
+        MIN_CELL_SIZE
+      );
   
   // Determine which rows to display
   const { startRow, endRow } = getVisibleRowsForPreview(visibleRowCount);
@@ -75,6 +78,7 @@ export default function HourTrackerGridPreview({
           key={`row-${row}`}
           row={row}
           cellSize={cellSize}
+          forceVisible={true}
         />
       );
     }
@@ -97,36 +101,41 @@ export default function HourTrackerGridPreview({
         </YStack>
         
         {/* Log Session Button */}
-        <Button
-          backgroundColor="#0A84FF"
-          height={60}
-          justifyContent="center"
-          alignItems="center"
-          borderTopLeftRadius={0}
-          borderTopRightRadius={0}
-          borderBottomLeftRadius={borderRadius.medium}
-          borderBottomRightRadius={borderRadius.medium}
-          pressStyle={{ opacity: 0.9 }}
-          onPress={onLogSession}
+        <View
+          position="relative"
           marginHorizontal={-spacing.large}
           marginBottom={-spacing.large}
           marginTop={spacing.medium}
-          cursor="pointer"
         >
-          <Text
-            color="white"
-            fontSize={16}
-            fontWeight="600"
+          <Button
+            backgroundColor="#0A84FF"
+            height={60}
+            justifyContent="center"
+            alignItems="center"
+            borderTopLeftRadius={0}
+            borderTopRightRadius={0}
+            borderBottomLeftRadius={borderRadius.medium}
+            borderBottomRightRadius={borderRadius.medium}
+            pressStyle={{ opacity: 0.9 }}
+            onPress={onLogSession}
+            cursor="pointer"
+            hoverStyle={{ opacity: 0.95 }}
           >
-            Log Session
-          </Text>
-        </Button>
+            <Text
+              color="white"
+              fontSize={16}
+              fontWeight="600"
+            >
+              Log Session
+            </Text>
+          </Button>
+        </View>
       </YStack>
     );
   }
 
-  // Always enable horizontal scrolling to prevent overlap
-  const needsHorizontalScroll = cellSize * GRID_COLUMNS > Math.min(width, 500);
+  // Always enable horizontal scrolling when in constrained view to prevent overlap
+  const needsHorizontalScroll = isWeb && constrainedView ? true : cellSize * GRID_COLUMNS > Math.min(width, 500);
 
   return (
     <YStack>
@@ -136,11 +145,10 @@ export default function HourTrackerGridPreview({
         paddingBottom={spacing.medium}
         position="relative"
         opacity={1}
+        hoverStyle={{ cursor: 'pointer' }}
         onPress={onShowFullGrid}
         // Set a minimum height to prevent layout shifts
         minHeight={cellSize * (endRow - startRow + 1) + 8}
-        cursor={onShowFullGrid ? 'pointer' : 'default'}
-        pressStyle={onShowFullGrid ? { opacity: 0.8 } : undefined}
       >
         {/* Make this a horizontal scrollable container if needed */}
         <ScrollView 
@@ -158,30 +166,35 @@ export default function HourTrackerGridPreview({
       </YStack>
 
       {/* Full width button that attaches to the bottom of the card */}
-      <Button
-        backgroundColor="#0A84FF"
-        height={60}
-        justifyContent="center"
-        alignItems="center"
-        borderTopLeftRadius={0}
-        borderTopRightRadius={0}
-        borderBottomLeftRadius={borderRadius.medium}
-        borderBottomRightRadius={borderRadius.medium}
-        pressStyle={{ opacity: 0.9 }}
-        onPress={onLogSession}
+      <View
+        position="relative"
         marginHorizontal={-spacing.large}
         marginBottom={-spacing.large}
         marginTop={spacing.medium}
-        cursor="pointer"
       >
-        <Text
-          color="white"
-          fontSize={16}
-          fontWeight="600"
+        <Button
+          backgroundColor="#0A84FF"
+          height={60}
+          justifyContent="center"
+          alignItems="center"
+          borderTopLeftRadius={0}
+          borderTopRightRadius={0}
+          borderBottomLeftRadius={borderRadius.medium}
+          borderBottomRightRadius={borderRadius.medium}
+          pressStyle={{ opacity: 0.9 }}
+          onPress={onLogSession}
+          cursor="pointer"
+          hoverStyle={{ opacity: 0.95 }}
         >
-          Log Session
-        </Text>
-      </Button>
+          <Text
+            color="white"
+            fontSize={16}
+            fontWeight="600"
+          >
+            Log Session
+          </Text>
+        </Button>
+      </View>
     </YStack>
   );
 }

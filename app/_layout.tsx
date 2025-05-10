@@ -6,13 +6,16 @@ import * as SplashScreen from 'expo-splash-screen';
 import { TamaguiProvider } from 'tamagui';
 import config from '../tamagui.config';
 import { ThemeProvider } from '../components/ThemeProvider';
-import { StatusBar } from 'expo-status-bar';
+import { theme } from '../constants/theme';
 import { Platform } from 'react-native';
+import { LoadingScreen } from '@components/LoadingScreen';
+import { ConstrainedLayout } from '../components/ConstrainedLayout';
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  // Always use dark theme
   const [loaded] = useFonts({
     // You can add custom fonts here if needed
   });
@@ -31,48 +34,52 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    return <LoadingScreen />; // Use our slick SVG loader here
   }
+
+  // Get the dark background color
+  const backgroundColor = theme.colors.dark.background;
 
   return (
     <TamaguiProvider config={config} defaultTheme="dark">
       <ThemeProvider>
-        <StatusBar style="light" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: 'fade',
-            contentStyle: {
-              backgroundColor: '#121212',
-            },
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen 
-            name="log-session" 
-            options={{
-              animation: 'slide_from_right',
+        <ConstrainedLayout>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: 'fade',
+              contentStyle: {
+                backgroundColor,
+              },
             }}
-          />
-          <Stack.Screen 
-            name="history" 
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen 
-            name="progress" 
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-          <Stack.Screen 
-            name="settings" 
-            options={{
-              animation: 'slide_from_right',
-            }}
-          />
-        </Stack>
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen 
+              name="log-session" 
+              options={{
+                animation: 'slide_from_right',
+              }}
+            />
+            <Stack.Screen 
+              name="progress" 
+              options={{
+                animation: 'slide_from_right',
+              }}
+            />
+            <Stack.Screen 
+              name="history" 
+              options={{
+                animation: 'slide_from_right',
+              }}
+            />
+            <Stack.Screen 
+              name="settings" 
+              options={{
+                animation: 'slide_from_right',
+              }}
+            />
+          </Stack>
+        </ConstrainedLayout>
       </ThemeProvider>
     </TamaguiProvider>
   );

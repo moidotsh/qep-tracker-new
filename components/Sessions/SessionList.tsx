@@ -3,6 +3,7 @@ import React from 'react';
 import { YStack, Card, Text } from 'tamagui';
 import { useAppTheme } from '../ThemeProvider';
 import { SessionData } from '../../data/trainingData';
+import { SessionItem } from './SessionItem';
 
 interface SessionListProps {
   /**
@@ -42,31 +43,16 @@ interface SessionListProps {
 }
 
 /**
- * Default duration formatter
- */
-function defaultFormatDuration(minutes: number): string {
-  if (minutes < 60) {
-    return `${minutes} min`;
-  }
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-  if (remainingMinutes === 0) {
-    return `${hours} hr`;
-  }
-  return `${hours} hr ${remainingMinutes} min`;
-}
-
-/**
  * A component to display a list of training sessions
  */
-export default function SessionList({
+export function SessionList({
   sessions,
   loading = false,
   onEditSession,
   emptyMessage = "No sessions recorded yet.",
   loadingMessage = "Loading session history...",
   space,
-  formatDuration = defaultFormatDuration
+  formatDuration
 }: SessionListProps) {
   const { colors, spacing, borderRadius } = useAppTheme();
   
@@ -113,37 +99,4 @@ export default function SessionList({
   );
 }
 
-// Simple SessionItem component
-function SessionItem({ 
-  session, 
-  onEditSession, 
-  formatDuration 
-}: { 
-  session: SessionData, 
-  onEditSession?: (id: string) => void, 
-  formatDuration: (minutes: number) => string 
-}) {
-  const { colors, spacing, fontSize, borderRadius } = useAppTheme();
-  
-  return (
-    <Card
-      backgroundColor={colors.card}
-      padding={spacing.large}
-      borderRadius={borderRadius.medium}
-      elevate
-    >
-      <Text 
-        color={colors.text} 
-        fontSize={fontSize.large} 
-        fontWeight="bold"
-        marginBottom={spacing.small}
-      >
-        {session.date}
-      </Text>
-      
-      <Text color={colors.text} fontSize={fontSize.medium}>
-        Duration: {formatDuration(session.duration)}
-      </Text>
-    </Card>
-  );
-}
+export default SessionList;
