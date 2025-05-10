@@ -3,7 +3,7 @@ import React from 'react';
 import { XStack, YStack, Text, Button } from 'tamagui';
 import { Zap, Settings } from '@tamagui/lucide-icons';
 import { useAppTheme } from '../ThemeProvider';
-import { navigateToSettings } from '../../navigation';
+import { navigateToSettings } from '../../navigation/NavigationHelper';
 
 interface HomeHeaderProps {
   formattedDate: string;
@@ -13,21 +13,21 @@ interface HomeHeaderProps {
   loading: boolean;
 }
 
-export function HomeHeader({ 
-    formattedDate, 
-    isDemoInitialized, 
-    handleInitializeDemo,
-    streak,
-    loading
-  }: HomeHeaderProps) {
-    const { colors, spacing } = useAppTheme();
+export default function HomeHeader({ 
+  formattedDate, 
+  isDemoInitialized, 
+  handleInitializeDemo,
+  streak,
+  loading
+}: HomeHeaderProps) {
+  const { colors, spacing } = useAppTheme();
   
-    return (
-      <YStack paddingBottom={spacing.medium}> {/* Changed from spacing.small to spacing.medium */}
+  return (
+    <YStack paddingTop={spacing.medium} paddingBottom={spacing.small}>
       <XStack alignItems="center" justifyContent="space-between">
         <Text
           color={colors.text}
-          fontSize={32}
+          fontSize={26}
           fontWeight="bold"
         >
           QuickExtender Pro
@@ -82,7 +82,7 @@ export function HomeHeader({
         )}
       </XStack>
 
-      <YStack paddingTop={spacing.medium}>
+      <YStack paddingTop={spacing.large}>
         <XStack justifyContent='space-between' alignItems='center' width='100%'>
           <Text
             color={colors.text}
@@ -106,5 +106,3 @@ export function HomeHeader({
     </YStack>
   );
 }
-
-export default HomeHeader;

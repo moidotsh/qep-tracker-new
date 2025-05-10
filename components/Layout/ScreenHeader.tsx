@@ -77,6 +77,7 @@ export function ScreenHeader({
       width="100%" 
       justifyContent="space-between"
       alignItems="center" 
+      marginTop={spacing.large}
       marginBottom={marginBottom || spacing.large}
       paddingHorizontal={paddingHorizontal}
     >

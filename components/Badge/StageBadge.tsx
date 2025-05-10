@@ -1,36 +1,22 @@
-// components/Badges/StageBadge.tsx
+// components/Badge/StageBadge.tsx
 import React from 'react';
 import { View, Text } from 'tamagui';
 import { useAppTheme } from '../ThemeProvider';
 
 interface StageBadgeProps {
-  /**
-   * The stage name to display
-   */
   stageName: string;
-  
-  /**
-   * Optional badge type/color scheme
-   */
   type?: 'primary' | 'success' | 'warning' | 'info';
-  
-  /**
-   * Size of the badge
-   */
   size?: 'small' | 'medium' | 'large';
 }
 
-/**
- * A badge component for displaying the current stage
- */
-export function StageBadge({
+export default function StageBadge({
   stageName,
   type = 'primary',
   size = 'medium'
 }: StageBadgeProps) {
   const { colors, spacing, fontSize } = useAppTheme();
   
-  // Get background color based on type - match the exact blue from the design
+  // Get background color based on type
   const getBackgroundColor = () => {
     switch (type) {
       case 'success':
@@ -56,7 +42,7 @@ export function StageBadge({
     }
   };
   
-  // Get padding based on size prop - increased for better appearance
+  // Get padding based on size prop
   const getPadding = () => {
     switch (size) {
       case 'small':
@@ -75,7 +61,7 @@ export function StageBadge({
       backgroundColor={getBackgroundColor()}
       paddingHorizontal={paddingHorizontal}
       paddingVertical={paddingVertical}
-      borderRadius={30} // Much more rounded corners to match design
+      borderRadius={30} // More rounded corners to match design
     >
       <Text
         color="white"
@@ -88,5 +74,3 @@ export function StageBadge({
     </View>
   );
 }
-
-export default StageBadge;

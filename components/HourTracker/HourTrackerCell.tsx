@@ -57,7 +57,6 @@ export default function HourTrackerCell({
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
-        // Set minimum dimensions for web to ensure visibility
         style: {
           minWidth: MIN_SIZE,
           minHeight: MIN_SIZE
@@ -77,7 +76,7 @@ export default function HourTrackerCell({
             height={`${partialHeightRatio * 100}%`}
             backgroundColor="rgba(255, 255, 255, 0.3)"
           />
-          {partialHeightRatio < 1 && (
+          {partialHeightRatio < 1 && partialHeightRatio > 0 && (
             <View
               position="absolute"
               top={0}
@@ -101,7 +100,7 @@ export default function HourTrackerCell({
         </>
       )}
 
-      {/* Checkmark */}
+      {/* Checkmark for completed cells */}
       {isFullyFilled && (
         <Text
           color="#ffffff"

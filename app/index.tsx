@@ -1,45 +1,55 @@
-// app/index.tsx
+// app/index.tsx - Update imports to ensure every component uses direct imports
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { BarChart2, TrendingUp, Clock } from '@tamagui/lucide-icons';
-import { YStack, Text, Button } from 'tamagui';
-import { useAppTheme } from '../components/ThemeProvider';
-import { StatCard } from '../components/StatCard';
-import { FeatureSection } from '../components/FeatureCard';
 import { useTrainingData } from '../hooks/useTrainingData';
-import { calculateStreak, getTimeSinceLastSession } from '../utils/streakCalculator';
-import { HourTrackerCard } from '../components/Home/HourTrackerCard';
-import { RecentSessionCard } from '../components/Home/RecentSessionCard';
-import { FullGridModal } from '../components/Home/FullGridModal';
-import { HomeHeader } from '../components/Home/HomeHeader';
+import { calculateStreak } from '../utils/streakCalculator';
+import { SessionData } from '../data/trainingData';
+import { navigateToLogSession, navigateToProgress, navigateToHistory } from '../navigation/NavigationHelper';
+
+// Direct imports for each component
 import PageContainer from '../components/Layout/PageContainer';
-import {
-  navigateToLogSession,
-  navigateToProgress,
-  navigateToHistory
-} from '../navigation';
+import HomeHeader from '../components/Home/HomeHeader';
+import HourTrackerCard from '../components/Home/HourTrackerCard';
+import { RecentSessionCard } from '@components/Home/RecentSessionCard';
+import { FeatureSection } from '../components/FeatureCard';
+import StatSummary from '../components/Stats/StatSummary';
+import { FullGridModal } from '@components/Home/FullGridModal';
 
 export default function HomeScreen() {
-  // State for full grid modal
   const [showFullGrid, setShowFullGrid] = useState(false);
   const [isDemoInitialized, setIsDemoInitialized] = useState(false);
   
+  const { hours, stageInfo, loading, sessions, refresh, initializeDemo } = useTrainingData();
 
-  // Use training data hook
-  const { hours, stageInfo, loading, error, sessions, refresh, initializeDemo } = useTrainingData();
-
-  // Initialize demo data handler
   const handleInitializeDemo = async () => {
     await initializeDemo();
     setIsDemoInitialized(true);
     setTimeout(() => setIsDemoInitialized(false), 2000);
   };
 
-  // Format date 
   const today = new Date();
   const formattedDate = format(today, 'MMMM d, yyyy');
 
-  // Feature data for quick access cards
+  const getTimeSinceLastSession = (sessions: SessionData[]): string => {
+    if (sessions.length === 0) return "No sessions yet";
+
+    const lastSessionDate = new Date(sessions[0].date);
+    const now = new Date();
+    const diffHours = Math.round((now.getTime() - lastSessionDate.getTime()) / (1000 * 60 * 60));
+
+    if (diffHours < 1) return "Just now";
+    if (diffHours === 1) return "1h ago";
+    if (diffHours < 24) return `${diffHours}h ago`;
+
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays}d ago`;
+  };
+
+  useEffect(() => {
+    refresh();
+  }, []);
+
   const features = [
     {
       icon: <BarChart2 size={30} color="white" />,
@@ -58,44 +68,15 @@ export default function HomeScreen() {
     }
   ];
 
-  // Stats for the summary component
   const summaryStats = [
     { label: 'Total', value: loading ? '...' : hours.toFixed(1), unit: 'h' },
     { label: 'Goal', value: loading ? '...' : stageInfo.percentage, unit: '%' },
-    { label: 'Trained', value: loading ? '...' : (sessions.length > 0 ? getTimeSinceLastSession(sessions) : 'Never') }
+    { label: 'Trained', value: loading ? '...' : getTimeSinceLastSession(sessions) }
   ];
-
-  // Refresh data on mount
-  useEffect(() => {
-    refresh();
-  }, []);
-
-  const { spacing, borderRadius } = useAppTheme();
 
   return (
     <PageContainer>
-      {error && (
-        <YStack
-          backgroundColor="#FF3B30"
-          padding={spacing.medium}
-          borderRadius={borderRadius.medium}
-          marginBottom={spacing.medium}
-        >
-          <Text color="white" fontWeight="500">
-            {error}
-          </Text>
-          <Button
-            onPress={refresh}
-            backgroundColor="rgba(255,255,255,0.2)"
-            marginTop={spacing.small}
-          >
-            <Text color="white">Retry</Text>
-          </Button>
-        </YStack>
-      )}
-
-      {/* Header Section */}
-      <HomeHeader
+      <HomeHeader 
         formattedDate={formattedDate}
         isDemoInitialized={isDemoInitialized}
         handleInitializeDemo={handleInitializeDemo}
@@ -103,31 +84,27 @@ export default function HomeScreen() {
         loading={loading}
       />
 
-      {/* Stats Card */}
-      <StatCard
+      <StatSummary 
         stats={summaryStats}
-      // loading={loading}
+        loading={loading}
+        size="medium"
       />
 
-      {/* Hour Tracker Card */}
-      <HourTrackerCard
+      <HourTrackerCard 
         stageName={stageInfo.stageName}
         percentage={stageInfo.percentage}
         onShowFullGrid={() => setShowFullGrid(true)}
       />
 
-      {/* Recent Session Card */}
-      <RecentSessionCard
-        sessions={sessions}
+      <RecentSessionCard 
+        sessions={sessions} 
         hours={hours}
         loading={loading}
       />
 
-      {/* Quick Access Feature Cards */}
       <FeatureSection features={features} />
 
-      {/* Full Grid Modal */}
-      <FullGridModal
+      <FullGridModal 
         visible={showFullGrid}
         onClose={() => setShowFullGrid(false)}
         stageName={stageInfo.stageName}

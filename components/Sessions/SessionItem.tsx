@@ -1,35 +1,18 @@
 // components/Sessions/SessionItem.tsx
 import React from 'react';
-import { XStack, YStack, Text, Card, Separator } from 'tamagui';
+import { XStack, YStack, Text, Separator } from 'tamagui';
 import { Clock, Edit3 } from '@tamagui/lucide-icons';
 import { useAppTheme } from '../ThemeProvider';
 import { SessionData } from '../../data/trainingData';
+import CardContainer from '../UI/Card/CardContainer';
 
 interface SessionItemProps {
-  /**
-   * The session data to display
-   */
   session: SessionData;
-  
-  /**
-   * Handler for editing the session
-   */
   onEditSession?: (sessionId: string) => void;
-  
-  /**
-   * Whether to show all session details
-   */
   showDetails?: boolean;
-  
-  /**
-   * Optional custom formatter for duration
-   */
   formatDuration?: (minutes: number) => string;
 }
 
-/**
- * Default duration formatter
- */
 function defaultFormatDuration(minutes: number): string {
   if (minutes < 60) {
     return `${minutes} min`;
@@ -42,16 +25,13 @@ function defaultFormatDuration(minutes: number): string {
   return `${hours} hr ${remainingMinutes} min`;
 }
 
-/**
- * A card displaying a single training session
- */
-export function SessionItem({
+export default function SessionItem({
   session,
   onEditSession,
   showDetails = true,
   formatDuration = defaultFormatDuration
 }: SessionItemProps) {
-  const { colors, spacing, fontSize, borderRadius } = useAppTheme();
+  const { colors, spacing, fontSize } = useAppTheme();
   
   const handleEdit = () => {
     if (onEditSession) {
@@ -60,12 +40,7 @@ export function SessionItem({
   };
   
   return (
-    <Card
-      backgroundColor={colors.card}
-      padding={spacing.large}
-      borderRadius={borderRadius.medium}
-      elevate
-    >
+    <CardContainer elevate>
       {/* Session Header */}
       <XStack justifyContent="space-between" alignItems="center">
         <Text 
@@ -102,8 +77,6 @@ export function SessionItem({
           {/* Custom details can be added here */}
         </YStack>
       )}
-    </Card>
+    </CardContainer>
   );
 }
-
-export default SessionItem;

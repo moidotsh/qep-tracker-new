@@ -1,3 +1,4 @@
+// babel.config.js
 module.exports = function (api) {
   api.cache(true);
 
@@ -24,7 +25,6 @@ module.exports = function (api) {
         {
           root: ['./'],
           alias: {
-            '@': './',
             '@components': './components',
             '@home': './components/Home',
             '@tracker': './components/HourTracker',

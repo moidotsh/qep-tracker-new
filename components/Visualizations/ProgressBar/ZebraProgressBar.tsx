@@ -1,60 +1,69 @@
 // components/Visualizations/ProgressBar/ZebraProgressBar.tsx
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View as RNView } from 'react-native';
 import { XStack, YStack, Text, View } from 'tamagui';
 import { useAppTheme } from '../../ThemeProvider';
 
 interface ZebraProgressBarProps {
-  /**
-   * Current value
-   */
   value: number;
-  
-  /**
-   * Maximum value
-   */
   maxValue: number;
-  
-  /**
-   * Already used value (shown with zebra pattern)
-   */
   usedValue?: number;
-  
-  /**
-   * Format function for labels
-   */
   formatLabel?: (value: number) => string;
-  
-  /**
-   * Height of the progress bar
-   */
   height?: number;
-  
-  /**
-   * Show min/max labels
-   */
   showLabels?: boolean;
-  
-  /**
-   * Custom label for minimum value
-   */
   minLabel?: string;
-  
-  /**
-   * Custom label for maximum value
-   */
   maxLabel?: string;
-  
-  /**
-   * Additional info to show with max label
-   */
   maxLabelInfo?: string;
 }
 
-/**
- * A progress bar that supports showing already used portions with a zebra pattern
- */
-export function ZebraProgressBar({
+// Custom zebra pattern component that works on both web and native
+const ZebraPattern = ({ width, height }: { width: string, height: number }) => {
+  const isWeb = Platform.OS === 'web';
+  
+  if (isWeb) {
+    // Use CSS gradient on web for better performance
+    return (
+      <View
+        width={width}
+        height={height}
+        style={{
+          backgroundImage: 'repeating-linear-gradient(45deg, rgba(0,0,0,0), rgba(0,0,0,0) 5px, rgba(0,0,0,0.2) 5px, rgba(0,0,0,0.2) 10px)',
+        }}
+      />
+    );
+  } else {
+    // For native, create a series of small diagonal lines
+    return (
+      <RNView
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#333333',
+          position: 'relative',
+          overflow: 'hidden'
+        }}
+      >
+        {/* Create many small diagonal lines */}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <RNView
+            key={i}
+            style={{
+              position: 'absolute',
+              width: 2,
+              height: height * 2,
+              backgroundColor: '#444444',
+              top: -height / 2,
+              left: i * 6 - 10,
+              transform: [{ rotate: '45deg' }]
+            }}
+          />
+        ))}
+      </RNView>
+    );
+  }
+};
+
+export default function ZebraProgressBar({
   value,
   maxValue,
   usedValue = 0,
@@ -107,18 +116,7 @@ export function ZebraProgressBar({
             height="100%"
             overflow="hidden"
           >
-            {/* Actual zebra pattern */}
-            <View
-              width="100%"
-              height="100%"
-              style={{
-                backgroundImage: isWeb ?
-                  'repeating-linear-gradient(45deg, rgba(0,0,0,0), rgba(0,0,0,0) 5px, rgba(0,0,0,0.2) 5px, rgba(0,0,0,0.2) 10px)' :
-                  undefined,
-                // For native platforms, use a backgroundColor with some opacity instead
-                backgroundColor: !isWeb ? 'rgba(100, 100, 100, 0.3)' : undefined
-              }}
-            />
+            <ZebraPattern width="100%" height={height} />
           </View>
         )}
         
@@ -136,5 +134,3 @@ export function ZebraProgressBar({
     </YStack>
   );
 }
-
-export default ZebraProgressBar;

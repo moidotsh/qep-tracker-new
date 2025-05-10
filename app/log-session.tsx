@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import PageContainer from '../components/Layout/PageContainer';
 import ScreenHeader from '../components/Layout/ScreenHeader';
 import SessionForm from '../components/Sessions/SessionForm';
-import { NavigationPath } from '../navigation';
+import { NavigationPath } from '../navigation/NavigationHelper';
 
 export default function LogSessionScreen() {
   // Handle successful submission

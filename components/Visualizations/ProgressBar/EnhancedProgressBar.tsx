@@ -4,51 +4,17 @@ import { YStack, Text, XStack, View } from 'tamagui';
 import { useAppTheme } from '../../ThemeProvider';
 
 interface EnhancedProgressBarProps {
-  /**
-   * Current progress percentage (0-100)
-   */
   percentage: number;
-  
-  /**
-   * Start label (left side)
-   */
   startLabel?: string;
-  
-  /**
-   * End label (right side)
-   */
   endLabel?: string;
-  
-  /**
-   * Whether to show percentage in the center of the bar
-   */
   showPercentage?: boolean;
-  
-  /**
-   * Height of the progress bar
-   */
   height?: number;
-  
-  /**
-   * Background color
-   */
   backgroundColor?: string;
-  
-  /**
-   * Fill color
-   */
   fillColor?: string;
-  
-  /**
-   * Text color
-   */
   textColor?: string;
 }
 
-/**
- * An enhanced progress bar that clearly shows progress with labels and percentage
- */
-export function EnhancedProgressBar({
+export default function EnhancedProgressBar({
   percentage,
   startLabel,
   endLabel,
@@ -129,5 +95,3 @@ export function EnhancedProgressBar({
     </YStack>
   );
 }
-
-export default EnhancedProgressBar;

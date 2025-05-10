@@ -15,10 +15,7 @@ interface DurationInputProps {
   label?: string;
 }
 
-/**
- * A compound duration input that handles hours and minutes with increment/decrement controls
- */
-export function DurationInput({
+export default function DurationInput({
   hours,
   minutes,
   onHoursChange,
@@ -48,6 +45,28 @@ export function DurationInput({
     return calculateTotalMinutes(h, m) > remainingMinutes;
   };
   
+  // Calculate if we can increment to max (top off to remaining minutes)
+  const canTopOffToMax = () => {
+    if (remainingMinutes === undefined) return false;
+    
+    // If we're already at max or over, we can't top off
+    if (currentTotalMinutes >= remainingMinutes) return false;
+    
+    // If the hours + button is already disabled in normal mode, but there's still room to top off
+    return wouldExceedLimit(hours + 1, minutes) && currentTotalMinutes < remainingMinutes;
+  };
+  
+  // Calculate if we can increment minutes to max
+  const canTopOffMinutesToMax = () => {
+    if (remainingMinutes === undefined) return false;
+    
+    // If we're already at max or over, we can't top off
+    if (currentTotalMinutes >= remainingMinutes) return false;
+    
+    // If the minutes + button is already disabled in normal mode, but there's still room to top off
+    return wouldExceedLimit(hours, minutes + minuteStep) && currentTotalMinutes < remainingMinutes;
+  };
+  
   // Hours increment handler
   const incrementHours = () => {
     // Calculate total minutes with incremented hours
@@ -56,8 +75,7 @@ export function DurationInput({
     
     // Check if incrementing hours would exceed remaining daily time
     if (remainingMinutes !== undefined && totalMinutes > remainingMinutes) {
-      // *** KEY CHANGE: Allow maxing out to exact remaining time ***
-      // Calculate maximum hours and minutes possible
+      // Allow maxing out to exact remaining time
       const maxHours = Math.floor(remainingMinutes / 60);
       const maxMinutes = remainingMinutes % 60;
       
@@ -95,8 +113,7 @@ export function DurationInput({
     
     // Check if incrementing minutes would exceed remaining daily time
     if (remainingMinutes !== undefined && totalMinutes > remainingMinutes) {
-      // *** KEY CHANGE: Allow maxing out to exact remaining time ***
-      // Calculate maximum hours and minutes possible
+      // Allow maxing out to exact remaining time
       const maxHours = Math.floor(remainingMinutes / 60);
       const maxMinutes = remainingMinutes % 60;
       
@@ -135,30 +152,6 @@ export function DurationInput({
     }
     
     onMinutesChange(minutes - minuteStep);
-  };
-  
-  // *** KEY CHANGE: Calculate if can increment to max ***
-  // Check if we can increment to max (top off to remaining minutes)
-  const canTopOffToMax = () => {
-    if (remainingMinutes === undefined) return false;
-    
-    // If we're already at max or over, we can't top off
-    if (currentTotalMinutes >= remainingMinutes) return false;
-    
-    // If the hours + button is already disabled in normal mode, but there's still room to top off
-    return wouldExceedLimit(hours + 1, minutes) && currentTotalMinutes < remainingMinutes;
-  };
-  
-  // *** KEY CHANGE: Calculate if can increment minutes to max ***
-  // Check if we can increment minutes to max (top off to remaining minutes)
-  const canTopOffMinutesToMax = () => {
-    if (remainingMinutes === undefined) return false;
-    
-    // If we're already at max or over, we can't top off
-    if (currentTotalMinutes >= remainingMinutes) return false;
-    
-    // If the minutes + button is already disabled in normal mode, but there's still room to top off
-    return wouldExceedLimit(hours, minutes + minuteStep) && currentTotalMinutes < remainingMinutes;
   };
   
   return (
@@ -211,7 +204,7 @@ export function DurationInput({
               size="$4"
               backgroundColor={colors.cardAlt}
               onPress={incrementHours}
-              // *** KEY CHANGE: Enable button if we can top off ***
+              // Enable button if we can top off
               disabled={hours >= maxHours && !canTopOffToMax() && (wouldExceedLimit(hours + 1, minutes) && !canTopOffToMax())}
               opacity={(hours >= maxHours && !canTopOffToMax()) || (wouldExceedLimit(hours + 1, minutes) && !canTopOffToMax()) ? 0.5 : 1}
             >
@@ -246,7 +239,7 @@ export function DurationInput({
               size="$4"
               backgroundColor={colors.cardAlt}
               onPress={incrementMinutes}
-              // *** KEY CHANGE: Enable button if we can top off minutes ***
+              // Enable button if we can top off minutes
               disabled={(wouldExceedLimit(hours, minutes + minuteStep) && !canTopOffMinutesToMax()) || hours === maxHours}
               opacity={(wouldExceedLimit(hours, minutes + minuteStep) && !canTopOffMinutesToMax()) || hours === maxHours ? 0.5 : 1}
             >
@@ -258,5 +251,3 @@ export function DurationInput({
     </YStack>
   );
 }
-
-export default DurationInput;

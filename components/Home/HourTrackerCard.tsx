@@ -3,7 +3,7 @@ import React from 'react';
 import { XStack, YStack, Card, Text } from 'tamagui';
 import { useAppTheme } from '../ThemeProvider';
 import HourTrackerGridPreview from '../HourTracker/HourTrackerGridPreview';
-import { navigateToLogSession } from '../../navigation';
+import { navigateToLogSession } from '../../navigation/NavigationHelper';
 
 interface HourTrackerCardProps {
   stageName: string;
@@ -18,7 +18,7 @@ export function HourTrackerCard({ stageName, percentage, onShowFullGrid }: HourT
     <Card
       backgroundColor={colors.card}
       borderRadius={borderRadius.medium}
-      marginTop={spacing.medium} 
+      marginTop={spacing.xxs}
       marginBottom={spacing.large}
       paddingHorizontal={spacing.large}
       paddingVertical={spacing.large}
@@ -59,3 +59,5 @@ export function HourTrackerCard({ stageName, percentage, onShowFullGrid }: HourT
     </Card>
   );
 }
+
+export default HourTrackerCard;

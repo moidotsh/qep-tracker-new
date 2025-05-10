@@ -10,7 +10,7 @@ interface FeatureCardProps {
   onPress: () => void;
 }
 
-export const FeatureCard = ({ icon, title, onPress }: FeatureCardProps) => {
+export function FeatureCard({ icon, title, onPress }: FeatureCardProps) {
   const { colors, spacing, fontSize, borderRadius } = useAppTheme();
   const { width } = useWindowDimensions();
   const isNarrow = width < 350;
@@ -33,9 +33,9 @@ export const FeatureCard = ({ icon, title, onPress }: FeatureCardProps) => {
       }}
     >
       <YStack alignItems="center" space={spacing.small}>
-        {icon}
+        <Text>{icon}</Text>
         <Text 
-          fontSize={isNarrow ? fontSize.medium : fontSize.medium} 
+          fontSize={isNarrow ? fontSize.xs : fontSize.xs} 
           fontWeight="500" 
           color={colors.text}
         >
@@ -44,13 +44,13 @@ export const FeatureCard = ({ icon, title, onPress }: FeatureCardProps) => {
       </YStack>
     </Card>
   );
-};
+}
 
-export const FeatureSection = ({ features }: { features: Array<{ icon: React.ReactNode; title: string; onPress: () => void; }> }) => {
+export function FeatureSection({ features }: { features: Array<{ icon: React.ReactNode; title: string; onPress: () => void; }> }) {
   const { spacing } = useAppTheme();
   
   return (
-    <XStack justifyContent="space-between" marginTop={spacing.xxs}> {/* I PREFER THESE TO BE XXS MARGIN, DO NOT CHANGE */}
+    <XStack justifyContent="space-between" marginTop={spacing.xxs}>
       {features.map((feature, index) => (
         <React.Fragment key={index}>
           {index > 0 && <YStack width={spacing.medium} />}
@@ -63,4 +63,4 @@ export const FeatureSection = ({ features }: { features: Array<{ icon: React.Rea
       ))}
     </XStack>
   );
-};
+}

@@ -184,13 +184,8 @@ export function getCurrentStageProgress(): { stageName: string; percentage: numb
     const stageLength = currentStage.endCell - currentStage.startCell + 1;
     const completedCellsInStage = currentCellIndex - currentStage.startCell;
     
-    // If this is the last cell in the stage, factor in the partial progress
-    let stagePercentage = 0;
-    if (currentCellIndex === currentStage.endCell) {
-        stagePercentage = ((completedCellsInStage + partialProgress) / stageLength) * 100;
-    } else {
-        stagePercentage = ((completedCellsInStage + partialProgress) / stageLength) * 100;
-    }
+    // Calculate percentage
+    let stagePercentage = ((completedCellsInStage + partialProgress) / stageLength) * 100;
     
     return {
         stageName: currentStage.name,

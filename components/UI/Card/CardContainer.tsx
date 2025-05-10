@@ -4,73 +4,33 @@ import { Card, YStack, Text } from 'tamagui';
 import { useAppTheme } from '../../ThemeProvider';
 
 interface CardContainerProps {
-    /**
-     * Card content
-     */
     children: ReactNode;
-
-    /**
-     * Card title
-     */
     title?: string;
-
-    /**
-     * Additional content to display in the header next to the title
-     */
     headerContent?: ReactNode;
-
-    /**
-     * Whether to apply elevation shadow
-     */
     elevate?: boolean;
-
-    /**
-     * Custom padding
-     */
     padding?: number | string;
-
-    /**
-     * Margin top
-     */
     marginTop?: number | string;
-
-    /**
-     * Margin bottom
-     */
     marginBottom?: number | string;
-
-    /**
-     * Whether to add space between children
-     */
+    paddingBottom?: number | string;
+    borderBottomLeftRadius?: number ;
+    borderBottomRightRadius?: number ;
     spaced?: boolean;
-
-    /**
-     * Space amount when spaced is true
-     */
     space?: number;
-
-    /**
-     * Custom background color
-     */
     backgroundColor?: string;
-
-    /**
-     * On press handler for making the card clickable
-     */
     onPress?: () => void;
 }
 
-/**
- * Standard card container with consistent styling - updated with correct spacing
- */
-export function CardContainer({
+export default function CardContainer({
     children,
     title,
     headerContent,
-    elevate = false, // Changed default to match design
+    elevate = false,
     padding,
+    paddingBottom,
+    borderBottomLeftRadius,
+    borderBottomRightRadius,
     marginTop,
-    marginBottom = 24, // Added default bottom margin to prevent colliding cards
+    marginBottom = 24,
     spaced = false,
     space,
     backgroundColor,
@@ -79,7 +39,7 @@ export function CardContainer({
     const { colors, spacing, fontSize, borderRadius } = useAppTheme();
 
     // Default padding based on theme spacing
-    const defaultPadding = spacing.xlarge; // Changed from spacing.large to spacing.xlarge
+    const defaultPadding = spacing.xlarge;
 
     return (
         <Card
@@ -88,6 +48,9 @@ export function CardContainer({
             borderRadius={borderRadius.medium}
             marginTop={marginTop}
             marginBottom={marginBottom}
+            borderBottomLeftRadius={borderBottomLeftRadius}
+            borderBottomEndRadius={borderBottomRightRadius}
+            paddingBottom={paddingBottom}
             elevate={elevate}
             onPress={onPress}
             overflow="hidden"
@@ -117,7 +80,6 @@ export function CardContainer({
 
             <YStack
                 space={spaced ? (space || spacing.medium) : undefined}
-                // Added small internal padding to prevent content from touching edges
                 paddingVertical={padding === undefined ? 0 : 4}
             >
                 {children}
@@ -125,5 +87,3 @@ export function CardContainer({
         </Card>
     );
 }
-
-export default CardContainer;

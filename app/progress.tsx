@@ -1,15 +1,16 @@
-// app/progress.tsx
+// app/progress.tsx 
 import React from 'react';
-import { YStack, Card } from 'tamagui';
+import { YStack } from 'tamagui';
 import { useAppTheme } from '../components/ThemeProvider';
 import PageContainer from '../components/Layout/PageContainer';
 import ScreenHeader from '../components/Layout/ScreenHeader';
 import ProgressDetail from '../components/Stats/ProgressDetail';
 import StatIconCard from '../components/Stats/StatIconCard';
-import AppButton from '@components/Button/AppButton';
+import AppButton from '../components/Button/AppButton';
 import { useTrainingData } from '../hooks/useTrainingData';
-import { NavigationPath, navigateToLogSession } from '../navigation';
+import { NavigationPath, navigateToLogSession } from '../navigation/NavigationHelper';
 import { TrendingUp, CheckCircle, Clock, Plus } from '@tamagui/lucide-icons';
+import CardContainer from '../components/UI/Card/CardContainer';
 
 export default function ProgressScreen() {
   const { colors, spacing } = useAppTheme();
@@ -50,7 +51,7 @@ export default function ProgressScreen() {
       />
       
       {/* Progress Detail Card */}
-      <Card marginBottom={spacing.medium}>
+      <CardContainer marginBottom={spacing.medium}>
         <ProgressDetail
           currentSize={mockProgressData.currentSize}
           startSize={mockProgressData.startSize}
@@ -58,10 +59,10 @@ export default function ProgressScreen() {
           stageName={mockProgressData.stageName}
           loading={loading}
         />
-      </Card>
+      </CardContainer>
       
       {/* Stats Cards */}
-      <Card>
+      <CardContainer marginBottom={spacing.medium}>
         <YStack space={spacing.medium}>
           {/* Sessions Logged */}
           <StatIconCard
@@ -89,7 +90,7 @@ export default function ProgressScreen() {
             marginBottom={spacing.small}
           />
         </YStack>
-      </Card>
+      </CardContainer>
       
       {/* Log Session Button */}
       <AppButton
